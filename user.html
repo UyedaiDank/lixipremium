@@ -17,9 +17,12 @@
         .stock-list { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; font-size: 0.8rem; }
         .stock-item { background: rgba(255,255,255,0.1); padding: 4px 10px; border-radius: 10px; border: 1px solid var(--gold); }
 
-        .leaderboard { max-width: 400px; margin: 15px auto; background: rgba(255,255,255,0.05); border-radius: 15px; padding: 10px; border: 1px solid #333; }
-        .leader-item { display: flex; justify-content: space-between; padding: 6px; border-bottom: 1px solid #222; font-size: 0.8rem; }
-        .leader-item span:first-child { color: var(--gold); font-weight: bold; }
+        /* Bảng xếp hạng Top 1-5 */
+        .leaderboard { max-width: 420px; margin: 15px auto; background: rgba(255,255,255,0.05); border-radius: 15px; padding: 15px; border: 1px solid #333; }
+        .leader-item { display: flex; align-items: center; padding: 8px; border-bottom: 1px solid #222; font-size: 0.85rem; }
+        .rank { width: 30px; font-weight: bold; color: var(--gold); text-align: left; }
+        .user-info { flex: 1; text-align: left; color: #eee; }
+        .gift-info { color: var(--gold); font-weight: bold; font-size: 0.8rem; }
 
         .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(85px, 1fr)); gap: 12px; max-width: 600px; margin: 20px auto; }
         .lixi { aspect-ratio: 2/3; background: var(--red); border: 2px solid var(--gold); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 35px; cursor: pointer; transition: 0.3s; box-shadow: 0 4px 10px rgba(0,0,0,0.5); }
@@ -27,11 +30,8 @@
         .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 9999; padding: 20px; box-sizing: border-box; }
         .win-box { background: white; color: #333; padding: 25px; border-radius: 20px; border: 5px solid var(--gold); width: 100%; max-width: 350px; }
         input { width: 100%; padding: 12px; margin: 10px 0; border: 2px solid #ddd; border-radius: 10px; text-align: center; font-weight: bold; }
-        button { width: 100%; padding: 12px; background: var(--red); color: white; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; font-size: 1rem; }
-        
-        /* Nút Like Facebook */
-        .btn-like-fb { background: #1877F2; margin-top: 10px; display: flex; align-items: center; justify-content: center; gap: 10px; }
-        #countdown { font-weight: bold; color: var(--red); }
+        button { width: 100%; padding: 12px; background: var(--red); color: white; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; }
+        .btn-like-fb { background: #1877F2; margin-top: 10px; }
     </style>
 </head>
 <body>
@@ -44,8 +44,8 @@
     </div>
 
     <div class="leaderboard">
-        <div style="font-weight:bold; color:var(--gold); margin-bottom:5px;">🏆 VỪA NHẬN THƯỞNG</div>
-        <div id="winner-list">...</div>
+        <div style="font-weight:bold; color:var(--gold); margin-bottom:10px; font-size: 1rem;">🏆 NGƯỜI MAY MẮN MỚI NHẤT</div>
+        <div id="winner-list">Chờ người mở bát...</div>
     </div>
 
     <div class="grid" id="main-grid"></div>
@@ -53,7 +53,6 @@
     <div class="overlay" id="loginForm">
         <div class="win-box">
             <h2>🧧 NHẬP ID IG</h2>
-            <p style="font-size: 0.8rem; color: #666;">Điền ID Instagram để Hùng trả quà nhé!</p>
             <input type="text" id="igID" placeholder="@username_cua_ban">
             <button onclick="checkIG()">TIẾP TỤC</button>
         </div>
@@ -62,16 +61,10 @@
     <div class="overlay" id="likeForm" style="display: none;">
         <div class="win-box">
             <h2 style="color: #1877F2;">👍 LIKE BÀI VIẾT</h2>
-            <p style="font-size: 0.85rem; color: #333; line-height: 1.4;">
-                Bạn vui lòng <b>Like (Thích)</b> bài viết chỉ định bên dưới để nhận lượt bốc lì xì nhé!
-            </p>
-            
-            <button class="btn-like-fb" onclick="handleLike()">
-                👍 BẤM ĐỂ LIKE BÀI VIẾT
-            </button>
-
-            <div id="waitMsg" style="margin-top: 15px; font-size: 0.8rem; display: none;">
-                Vui lòng đợi <span id="timer">7</span> giây để hệ thống xác nhận...
+            <p style="font-size: 0.85rem; color: #333;">Vui lòng <b>Like</b> bài viết chỉ định để nhận lượt bốc!</p>
+            <button class="btn-like-fb" onclick="handleLike()">👍 BẤM ĐỂ LIKE BÀI VIẾT</button>
+            <div id="waitMsg" style="margin-top: 15px; font-size: 0.85rem; display: none; color: #ce1f1f; font-weight: bold;">
+                Đang xác thực... <span id="timer">8</span>s
             </div>
         </div>
     </div>
@@ -101,11 +94,15 @@
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
         let userIG = "";
-        
-        // DÁN LINK BÀI VIẾT CỦA HÙNG VÀO ĐÂY
-        const fbPostURL = "https://www.facebook.com/share/p/1DH73cWPGR/";
+        const fbPostURL = "https://www.facebook.com/share/p/1C39v7TrSe/";
 
-        // Hiệu ứng hoa rơi
+        // Hàm ẩn ID: @tuanhung -> @tu***ng
+        function maskID(id) {
+            id = id.replace('@', '');
+            if (id.length <= 3) return "@" + id[0] + "***";
+            return "@" + id.substring(0, 2) + "***" + id.substring(id.length - 2);
+        }
+
         function createFlowers() {
             const kinds = ['🌸', '🌼'];
             setInterval(() => {
@@ -115,7 +112,6 @@
                 f.style.left = Math.random() * 100 + 'vw';
                 f.style.fontSize = (Math.random() * 10 + 15) + 'px';
                 f.style.animationDuration = (Math.random() * 3 + 2) + 's';
-                f.style.opacity = Math.random();
                 document.body.appendChild(f);
                 setTimeout(() => f.remove(), 5000);
             }, 300);
@@ -124,7 +120,7 @@
 
         window.checkIG = async () => {
             const rawIG = document.getElementById('igID').value.trim().toLowerCase();
-            if (rawIG.length < 3) return alert("Vui lòng nhập ID IG!");
+            if (rawIG.length < 3) return alert("Nhập đúng ID!");
             const safeIG = rawIG.replace(/[@.]/g, "_");
             const snap = await get(ref(db, 'used_ig/' + safeIG));
             if (snap.exists()) {
@@ -137,37 +133,30 @@
             }
         };
 
-        // Xử lý khi bấm nút Like
         window.handleLike = () => {
-            // Mở link bài viết FB
             window.open(fbPostURL, '_blank');
-            
-            // Hiện đếm ngược
             document.getElementById('waitMsg').style.display = 'block';
-            let timeLeft = 7;
+            let timeLeft = 8;
             const timerEl = document.getElementById('timer');
-            
             const countdown = setInterval(() => {
                 timeLeft--;
                 timerEl.innerText = timeLeft;
                 if(timeLeft <= 0) {
                     clearInterval(countdown);
                     document.getElementById('likeForm').style.display = 'none';
-                    alert("Xác nhận hoàn tất! Bạn có thể bốc lì xì ngay bây giờ.");
+                    alert("Hoàn tất! Hãy chọn bao lì xì của bạn.");
                 }
             }, 1000);
         };
 
-        // Lắng nghe dữ liệu
         onValue(ref(db, 'lixi_services'), (snap) => {
             const data = snap.val();
             const grid = document.getElementById('main-grid');
             const detailBox = document.getElementById('detail-count');
-            grid.innerHTML = ''; let counts = {}; let total = 0;
+            grid.innerHTML = ''; let counts = {};
             if(data) {
                 data.forEach((item, index) => {
                     if(item.status === 'available') {
-                        total++;
                         counts[item.platform] = (counts[item.platform] || 0) + 1;
                         const el = document.createElement('div');
                         el.className = 'lixi'; el.innerHTML = '🧧';
@@ -178,17 +167,23 @@
             }
             let html = '';
             for (let p in counts) html += `<div class="stock-item">${p}: ${counts[p]}</div>`;
-            detailBox.innerHTML = html || "KHO TRỐNG";
+            detailBox.innerHTML = html || "HẾT QUÀ";
         });
 
-        // Bảng xếp hạng
+        // Cập nhật bảng xếp hạng Top 1-5 ẩn ID
         onValue(query(ref(db, 'used_ig'), limitToLast(5)), (snap) => {
             const data = snap.val();
             const list = document.getElementById('winner-list');
-            if(!data) { list.innerHTML = "Chờ người may mắn..."; return; }
+            if(!data) return;
             let html = '';
-            Object.values(data).reverse().forEach(win => {
-                html += `<div class="leader-item"><span>@${win.ig}</span> <span>trúng ${win.gift}</span></div>`;
+            let items = Object.values(data).reverse();
+            items.forEach((win, index) => {
+                html += `
+                    <div class="leader-item">
+                        <div class="rank">#${index + 1}</div>
+                        <div class="user-info">${maskID(win.ig)}</div>
+                        <div class="gift-info">${win.gift}</div>
+                    </div>`;
             });
             list.innerHTML = html;
         });
