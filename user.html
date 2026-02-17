@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Hái Lộc Đầu Xuân - Tuấn Hùng</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        :root { --red: #ce1f1f; --gold: #ffd700; --dark: #121212; }
+        body { background: var(--dark); color: #fff; font-family: 'Segoe UI', sans-serif; text-align: center; padding: 20px; margin: 0; }
+        
+        /* Banner số quà chi tiết - Giữ nguyên form đẹp của bạn */
+        .stock-banner { 
+            background: rgba(206, 31, 31, 0.2); 
+            border: 2px solid var(--gold); 
+            padding: 15px 25px; 
+            border-radius: 20px; 
+            margin: 20px auto; 
+            display: inline-block; 
+            max-width: 90%;
+        }
+        .stock-title { font-weight: bold; margin-bottom: 10px; color: var(--gold); border-bottom: 1px solid rgba(255,215,0,0.3); padding-bottom: 5px; }
+        .stock-list { display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; font-size: 0.9rem; font-weight: bold; }
+        .stock-item { background: rgba(255,255,255,0.1); padding: 5px 12px; border-radius: 10px; border: 1px solid rgba(255,215,0,0.2); }
+        .qty { color: var(--gold); font-size: 1.1rem; }
+
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(90px, 1fr)); gap: 15px; max-width: 600px; margin: 30px auto; }
+        .lixi { aspect-ratio: 2/3; background: var(--red); border: 2px solid var(--gold); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 40px; cursor: pointer; transition: 0.3s; box-shadow: 0 5px 15px rgba(0,0,0,0.5); }
+        .lixi:hover { transform: translateY(-5px); filter: brightness(1.2); }
+        
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 9999; padding: 20px; box-sizing: border-box; }
+        .win-box { background: white; color: #333; padding: 25px; border-radius: 20px; border: 5px solid var(--gold); width: 100%; max-width: 350px; }
+        input { width: 100%; padding: 12px; margin: 10px 0; border: 2px solid #ddd; border-radius: 10px; box-sizing: border-box; text-align: center; font-weight: bold; }
+        button { width: 100%; padding: 12px; background: var(--red); color: white; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+    <h1>🧧 HÁI LỘC ĐẦU XUÂN 🧧</h1>
+    
+    <div class="stock-banner">
+        <div class="stock-title">🔥 KHO QUÀ CÒN LẠI 🔥</div>
+        <div class="stock-list" id="detail-count">
+            Đang kiểm tra kho...
+        </div>
+    </div>
+
+    <div class="grid" id="main-grid"></div>
+
+    <div class="overlay" id="loginForm">
+        <div class="win-box">
+            <h2>🧧 NHẬP ID INSTAGRAM</h2>
+            <p style="font-size: 0.8rem; color: #666;">Nhập ID để shop kiểm tra và trả quà nhé!</p>
+            <input type="text" id="igID" placeholder="@username_cua_ban">
+            <button onclick="checkIG()">VÀO HÁI LỘC</button>
+        </div>
+    </div>
+
+    <div class="overlay" id="resultForm" style="display: none;">
+        <div class="win-box">
+            <h2 style="color: var(--red)">CHÚC MỪNG 🎉</h2>
+            <div id="giftText" style="font-size: 1.2rem; font-weight: bold; margin: 15px 0;"></div>
+            <p style="font-size: 0.8rem; color: #666;">Hùng sẽ sớm liên hệ qua IG của bạn để trả thưởng!</p>
+            <button onclick="location.reload()">TUYỆT VỜI</button>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getDatabase, ref, onValue, update, get } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyAi-aFwXlI_BtKcbVyV9poRrWkuzfBMCk8",
+            authDomain: "quanlilixiacc.firebaseapp.com",
+            projectId: "quanlilixiacc",
+            storageBucket: "quanlilixiacc.firebasestorage.app",
+            messagingSenderId: "351169563993",
+            appId: "1:351169563993:web:f7d4df9c18df7f302e9048",
+            databaseURL: "https://quanlilixiacc-default-rtdb.asia-southeast1.firebasedatabase.app"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+        let userIG = "";
+
+        window.checkIG = async () => {
+            const rawIG = document.getElementById('igID').value.trim().toLowerCase();
+            if (rawIG.length < 3) return alert("Vui lòng nhập ID IG hợp lệ!");
+            const safeIG = rawIG.replace(/[@.]/g, "_");
+            const snap = await get(ref(db, 'used_ig/' + safeIG));
+            if (snap.exists()) {
+                alert("ID này đã nhận lì xì rồi nha!");
+                location.reload();
+            } else {
+                userIG = rawIG;
+                document.getElementById('loginForm').style.display = 'none';
+            }
+        };
+
+        onValue(ref(db, 'lixi_services'), (snap) => {
+            const data = snap.val();
+            const grid = document.getElementById('main-grid');
+            const detailBox = document.getElementById('detail-count');
+            
+            grid.innerHTML = '';
+            let counts = {}; // Đối tượng để đếm từng loại
+            let totalRemaining = 0;
+
+            if(data) {
+                data.forEach((item, index) => {
+                    if(item.status === 'available') {
+                        totalRemaining++;
+                        // Gom nhóm theo platform
+                        let key = item.platform;
+                        counts[key] = (counts[key] || 0) + 1;
+
+                        const el = document.createElement('div');
+                        el.className = 'lixi'; el.innerHTML = '🧧';
+                        el.onclick = () => pick(index, item);
+                        grid.appendChild(el);
+                    }
+                });
+            }
+
+            // Hiển thị chi tiết số lượng
+            if(totalRemaining > 0) {
+                let html = '';
+                for (let platform in counts) {
+                    html += `<div class="stock-item">${platform}: <span class="qty">${counts[platform]}</span></div>`;
+                }
+                detailBox.innerHTML = html;
+            } else {
+                detailBox.innerHTML = "KHO ĐÃ HẾT QUÀ!";
+            }
+
+            if(totalRemaining === 0 && userIG) {
+                document.body.innerHTML = "<h2 style='margin-top:100px;'>HẾT QUÀ MẤT RỒI! <br> HẸN BẠN LẦN SAU NHÉ!</h2>";
+            }
+        });
+
+        async function pick(index, item) {
+            if(!userIG || !confirm("Bạn chọn bao lì xì này chứ?")) return;
+            const giftName = item.category === 'ACC' ? `Tài khoản ${item.platform}` : `${item.amount} ${item.service} ${item.platform}`;
+            const safeIG = userIG.replace(/[@.]/g, "_");
+            
+            try {
+                const up = {};
+                up[`lixi_services/${index}/status`] = 'opened';
+                up[`used_ig/${safeIG}`] = { ig: userIG, gift: giftName, time: new Date().toLocaleString() };
+                await update(ref(db), up);
+
+                document.getElementById('giftText').innerText = giftName;
+                document.getElementById('resultForm').style.display = 'flex';
+                confetti({ particleCount: 150, spread: 70 });
+
+                fetch(`https://api.telegram.org/bot8506964729:AAFOdrKaq5TUMiqI7OWfHKpNrwY4qZoynVo/sendMessage?chat_id=7114174347&text=${encodeURIComponent('🎁 TRÚNG QUÀ:\n📸 IG: '+userIG+'\n🎁 Quà: '+giftName)}`);
+            } catch (e) { alert("Lỗi! Thử lại sau nhé."); }
+        }
+    </script>
+</body>
+</html>
