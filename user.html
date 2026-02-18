@@ -12,10 +12,12 @@
         .flower { position: fixed; top: -10%; z-index: 999; user-select: none; pointer-events: none; animation: fall linear infinite; }
         @keyframes fall { to { transform: translateY(110vh) rotate(360deg); } }
 
-        /* Banner & BXH (Giữ nguyên giao diện của bạn) */
+        /* Banner kho quà */
         .stock-banner { background: rgba(206, 31, 31, 0.2); border: 2px solid var(--gold); padding: 15px; border-radius: 20px; margin: 15px auto; display: inline-block; max-width: 90%; }
         .stock-list { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; font-size: 0.8rem; }
         .stock-item { background: rgba(255,255,255,0.1); padding: 4px 10px; border-radius: 10px; border: 1px solid var(--gold); }
+
+        /* BXH Top 5 */
         .leaderboard { max-width: 420px; margin: 15px auto; background: rgba(255,255,255,0.05); border-radius: 15px; padding: 15px; border: 1px solid #333; }
         .leader-item { display: flex; align-items: center; padding: 8px; border-bottom: 1px solid #222; font-size: 0.85rem; }
         .rank { width: 35px; font-weight: bold; color: var(--gold); text-align: left; }
@@ -27,26 +29,19 @@
 
         /* HIỆU ỨNG MỞ BAO LÌ XÌ */
         .lixi-box { position: relative; width: 90px; height: 130px; cursor: pointer; margin: auto; }
-        
-        /* Thân bao lì xì */
         .lixi-body { position: absolute; bottom: 0; width: 100%; height: 80%; background: var(--red); border: 2px solid var(--gold); border-radius: 0 0 10px 10px; z-index: 2; display: flex; align-items: center; justify-content: center; font-size: 30px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
-
-        /* Nắp bao lì xì */
         .lixi-cap { position: absolute; top: 10%; width: 100%; height: 30%; background: #b01a1a; border: 2px solid var(--gold); border-bottom: none; border-radius: 10px 10px 0 0; z-index: 3; transform-origin: top; transition: transform 0.5s ease; }
-        
-        /* Món quà ẩn bên trong */
-        .gift-inside { position: absolute; bottom: 10%; left: 10%; width: 80%; height: 60%; background: #fff; border-radius: 5px; color: #333; font-size: 0.6rem; font-weight: bold; display: flex; align-items: center; justify-content: center; padding: 5px; box-sizing: border-box; z-index: 1; transition: transform 1s ease, opacity 0.5s; opacity: 0; text-align: center; }
+        .gift-inside { position: absolute; bottom: 10%; left: 5%; width: 90%; height: 60%; background: #fff; border-radius: 5px; color: #333; font-size: 0.65rem; font-weight: bold; display: flex; align-items: center; justify-content: center; padding: 5px; box-sizing: border-box; z-index: 1; transition: transform 1s ease, opacity 0.5s; opacity: 0; text-align: center; line-height: 1.2; }
 
-        /* Trạng thái khi mở */
         .lixi-box.open .lixi-cap { transform: rotateX(160deg); z-index: 1; }
-        .lixi-box.open .gift-inside { transform: translateY(-60px); opacity: 1; z-index: 4; }
+        .lixi-box.open .gift-inside { transform: translateY(-65px); opacity: 1; z-index: 4; }
 
         /* Overlays */
         .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 9999; padding: 20px; box-sizing: border-box; }
         .win-box { background: white; color: #333; padding: 25px; border-radius: 20px; border: 5px solid var(--gold); width: 100%; max-width: 350px; text-align: center; }
         input { width: 100%; padding: 12px; margin: 10px 0; border: 2px solid #ddd; border-radius: 10px; text-align: center; font-weight: bold; }
         button { width: 100%; padding: 12px; background: var(--red); color: white; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; }
-        .btn-notify { background: #28a745; margin-top: 15px; font-size: 0.9rem; padding: 15px 5px; }
+        .btn-notify { background: #28a745; margin-top: 15px; font-size: 0.9rem; padding: 15px 5px; line-height: 1.4; }
 
         #customAlert { display: none; z-index: 10000; }
         .alert-content { background: #fff; border-top: 10px solid var(--gold); padding: 20px; border-radius: 20px; }
@@ -79,7 +74,7 @@
     <div class="overlay" id="loginForm">
         <div class="win-box">
             <h2 style="margin-top:0">🧧 NHẬP ID INSTAGRAM</h2>
-            <input type="text" id="igID" placeholder="@user.dth (Có dấu @)">
+            <input type="text" id="igID" placeholder="@user.dth (Phải có @)">
             <button onclick="checkIG()">TIẾP TỤC</button>
         </div>
     </div>
@@ -89,7 +84,7 @@
             <h2 style="color: var(--blue); margin-top:0">👍 LIKE BÀI VIẾT</h2>
             <p>Vui lòng <b>Like</b> bài viết để nhận lộc!</p>
             <button onclick="handleLike()" style="background:var(--blue)">👍 BẤM ĐỂ LIKE</button>
-            <div id="waitMsg" style="display:none; margin-top:10px; color:red; font-weight:bold;">Xác thực sau... <span id="timer">8</span>s</div>
+            <div id="waitMsg" style="display:none; margin-top:10px; color:red; font-weight:bold;">Đang xác thực... <span id="timer">8</span>s</div>
         </div>
     </div>
 
@@ -125,7 +120,7 @@
 
         window.checkIG = async () => {
             const raw = document.getElementById('igID').value.trim().toLowerCase();
-            if (!raw.startsWith('@')) return showAlert("ID phải có dấu @!");
+            if (!raw.startsWith('@')) return showAlert("ID phải bắt đầu bằng dấu @");
             const safeIG = raw.replace(/[@.]/g, "_");
             const snap = await get(ref(db, 'used_ig/' + safeIG));
             if (snap.exists()) return showAlert("Bạn đã bốc rồi!");
@@ -154,7 +149,9 @@
                     if(item.status === 'available') {
                         let plat = item.platform === 'Spotify' ? 'CapCut' : item.platform;
                         counts[plat] = (counts[plat] || 0) + 1;
-                        let gift = item.category === 'ACC' ? `ACC ${plat}` : `${item.amount} ${item.service}`;
+                        
+                        // FIX: Thêm plat (TikTok/FB..) vào cuối tên quà
+                        let gift = item.category === 'ACC' ? `ACC ${plat}` : `${item.amount} ${item.service} ${plat}`;
 
                         const box = document.createElement('div');
                         box.className = 'lixi-box';
@@ -173,7 +170,6 @@
             detailBox.innerHTML = h || "HẾT LỘC";
         });
 
-        // BXH
         onValue(query(ref(db, 'used_ig'), limitToLast(5)), (snap) => {
             const data = snap.val();
             const list = document.getElementById('winner-list');
@@ -192,7 +188,6 @@
             const box = document.getElementById(`box-${index}`);
             if(box.classList.contains('open')) return;
 
-            // HIỆU ỨNG TỪ TỪ MỞ
             box.classList.add('open');
 
             const safeIG = userIG.replace(/[@.]/g, "_");
@@ -208,10 +203,10 @@
                 
                 const teleMsg = `🧧 <b>LÌ XÌ MỚI</b>\n👤 <b>ID:</b> ${userIG}\n🎁 <b>Quà:</b> ${giftName}`;
                 fetch(`https://api.telegram.org/bot8506964729:AAFOdrKaq5TUMiqI7OWfHKpNrwY4qZoynVo/sendMessage?chat_id=7114174347&parse_mode=html&text=${encodeURIComponent(teleMsg)}`);
-            }, 1200); // Đợi quà trồi lên xong mới hiện bảng
+            }, 1200); 
         }
 
-        window.notifyHung = () => { alert("Đã gửi thông báo tới Hùng!"); location.reload(); };
+        window.notifyHung = () => { alert("Thông báo đã gửi! Chờ Hùng xử lý nhé."); location.reload(); };
 
         setInterval(() => {
             const f = document.createElement('div');
