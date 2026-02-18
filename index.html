@@ -11,34 +11,31 @@
         button { background: #ce1f1f; color: white; font-weight: bold; border: none; cursor: pointer; transition: 0.3s; }
         button:hover { background: #a01818; }
         .status { margin-top: 15px; font-size: 0.9rem; color: #666; }
-        .random-info { font-size: 0.8rem; color: #ce1f1f; font-style: italic; }
     </style>
 </head>
 <body>
 
     <div class="card">
         <h2>🧧 CÀI ĐẶT KHO LÌ XÌ</h2>
-        <p class="random-info">* Số lượng sẽ được Random khi gửi kho quà</p>
         
         <select id="platform">
             <option value="TikTok">TikTok</option>
             <option value="Facebook">Facebook</option>
             <option value="Instagram">Instagram</option>
-            <option value="CapCut">CapCut</option>
-        </select>
+            <option value="CapCut">CapCut</option> </select>
 
         <select id="service">
-            <option value="Follow">Follow (Random 100-300)</option>
-            <option value="Like">Like (Random 200-400)</option>
-            <option value="View">View (Random 100-1000)</option>
-            <option value="ACC Premium">Tài khoản Premium (Dành cho CapCut)</option>
+            <option value="Follow">Follow</option>
+            <option value="Like">Like</option>
+            <option value="View">View</option>
+            <option value="ACC">Tài khoản Premium</option>
         </select>
 
-        <input type="number" id="quantity" placeholder="Số lượng bao lì xì muốn tạo" value="10">
+        <input type="number" id="quantity" placeholder="Số lượng bao lì xì muốn tạo">
         
         <button onclick="generateLixi()">📤 GỬI KHO QUÀ LÊN HỆ THỐNG</button>
         
-        <div class="status" id="status">Sẵn sàng tạo quà...</div>
+        <div class="status" id="status">Sẵn sàng...</div>
     </div>
 
     <script type="module">
@@ -58,54 +55,51 @@
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
-        // Hàm lấy số ngẫu nhiên trong khoảng
+        // Hàm random số
         function getRandom(min, max) {
             return Math.floor(Math.random() * (max - min + 1)) + min;
         }
 
         window.generateLixi = async () => {
             const platform = document.getElementById('platform').value;
-            const serviceType = document.getElementById('service').value;
+            const service = document.getElementById('service').value;
             const qty = parseInt(document.getElementById('quantity').value);
             const statusDiv = document.getElementById('status');
 
-            if (!qty || qty <= 0) return alert("Nhập số lượng bao!");
+            if (!qty) return alert("Vui lòng nhập số lượng bao!");
 
-            statusDiv.innerText = "正在 Gửi dữ liệu...";
+            statusDiv.innerText = "Đang tạo dữ liệu...";
             const lixiList = [];
 
             for (let i = 0; i < qty; i++) {
                 let amount = 0;
-                let finalService = serviceType;
-
-                // Xử lý Logic Random số lượng
-                if (serviceType === "Follow") {
+                
+                // Áp dụng logic Random theo yêu cầu
+                if (service === "Follow") {
                     amount = getRandom(100, 300);
-                } else if (serviceType === "Like") {
+                } else if (service === "Like") {
                     amount = getRandom(200, 400);
-                } else if (serviceType === "View") {
+                } else if (service === "View") {
                     amount = getRandom(100, 1000);
                 } else {
-                    amount = "1"; // Cho ACC Premium
+                    amount = 1; // Cho ACC
                 }
 
                 lixiList.push({
                     platform: platform,
-                    service: finalService,
+                    service: service,
                     amount: amount,
-                    category: serviceType === "ACC Premium" ? "ACC" : "SERVICE",
+                    category: service === "ACC" ? "ACC" : "SERVICE",
                     status: "available"
                 });
             }
 
             try {
-                // Ghi đè kho quà mới lên Firebase
                 await set(ref(db, 'lixi_services'), lixiList);
-                statusDiv.innerText = `✅ Đã tạo thành công ${qty} bao lì xì ${platform}!`;
-                alert("Đã cập nhật kho quà thành công!");
+                statusDiv.innerText = `✅ Đã tạo thành công ${qty} bao ${platform}!`;
+                alert("Đã cập nhật kho quà!");
             } catch (error) {
-                console.error(error);
-                statusDiv.innerText = "❌ Lỗi khi gửi dữ liệu!";
+                statusDiv.innerText = "❌ Lỗi hệ thống!";
             }
         };
     </script>
