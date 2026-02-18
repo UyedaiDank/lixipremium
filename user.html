@@ -9,48 +9,47 @@
         :root { --red: #ce1f1f; --gold: #ffd700; --dark: #121212; --blue: #1877F2; }
         body { background: var(--dark); color: #fff; font-family: 'Segoe UI', sans-serif; text-align: center; padding: 20px; margin: 0; overflow-x: hidden; }
         
-        /* Hoa mai hoa đào rơi */
         .flower { position: fixed; top: -10%; z-index: 999; user-select: none; pointer-events: none; animation: fall linear infinite; }
         @keyframes fall { to { transform: translateY(110vh) rotate(360deg); } }
 
-        /* Banner kho quà */
+        /* Banner & BXH (Giữ nguyên giao diện của bạn) */
         .stock-banner { background: rgba(206, 31, 31, 0.2); border: 2px solid var(--gold); padding: 15px; border-radius: 20px; margin: 15px auto; display: inline-block; max-width: 90%; }
         .stock-list { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; font-size: 0.8rem; }
         .stock-item { background: rgba(255,255,255,0.1); padding: 4px 10px; border-radius: 10px; border: 1px solid var(--gold); }
-
-        /* BXH Top 5 ẩn ID */
         .leaderboard { max-width: 420px; margin: 15px auto; background: rgba(255,255,255,0.05); border-radius: 15px; padding: 15px; border: 1px solid #333; }
         .leader-item { display: flex; align-items: center; padding: 8px; border-bottom: 1px solid #222; font-size: 0.85rem; }
         .rank { width: 35px; font-weight: bold; color: var(--gold); text-align: left; }
         .user-info { flex: 1; text-align: left; color: #eee; }
         .gift-info { color: var(--gold); font-weight: bold; font-size: 0.8rem; }
 
-        /* Lưới bao lì xì với Perspective 3D */
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(90px, 1fr)); gap: 15px; max-width: 600px; margin: 20px auto; perspective: 1000px; }
+        /* Lưới bao lì xì */
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(90px, 1fr)); gap: 15px; max-width: 600px; margin: 20px auto; }
+
+        /* HIỆU ỨNG MỞ BAO LÌ XÌ */
+        .lixi-box { position: relative; width: 90px; height: 130px; cursor: pointer; margin: auto; }
         
-        /* Hiệu ứng lật lì xì */
-        .lixi-container { aspect-ratio: 2/3; position: relative; transform-style: preserve-3d; transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); cursor: pointer; }
-        .lixi-container.flipped { transform: rotateY(180deg); }
-        .lixi-face { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; display: flex; align-items: center; justify-content: center; border-radius: 8px; border: 2px solid var(--gold); box-shadow: 0 4px 10px rgba(0,0,0,0.5); }
-        .lixi-front { background: var(--red); font-size: 35px; }
-        .lixi-back { background: #fff; color: var(--red); transform: rotateY(180deg); flex-direction: column; padding: 5px; box-sizing: border-box; font-size: 0.7rem; font-weight: bold; text-align: center; }
-        .lixi-back span { color: #000; margin-top: 5px; font-size: 0.8rem; }
+        /* Thân bao lì xì */
+        .lixi-body { position: absolute; bottom: 0; width: 100%; height: 80%; background: var(--red); border: 2px solid var(--gold); border-radius: 0 0 10px 10px; z-index: 2; display: flex; align-items: center; justify-content: center; font-size: 30px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
 
-        /* Giao diện Overlay chung */
+        /* Nắp bao lì xì */
+        .lixi-cap { position: absolute; top: 10%; width: 100%; height: 30%; background: #b01a1a; border: 2px solid var(--gold); border-bottom: none; border-radius: 10px 10px 0 0; z-index: 3; transform-origin: top; transition: transform 0.5s ease; }
+        
+        /* Món quà ẩn bên trong */
+        .gift-inside { position: absolute; bottom: 10%; left: 10%; width: 80%; height: 60%; background: #fff; border-radius: 5px; color: #333; font-size: 0.6rem; font-weight: bold; display: flex; align-items: center; justify-content: center; padding: 5px; box-sizing: border-box; z-index: 1; transition: transform 1s ease, opacity 0.5s; opacity: 0; text-align: center; }
+
+        /* Trạng thái khi mở */
+        .lixi-box.open .lixi-cap { transform: rotateX(160deg); z-index: 1; }
+        .lixi-box.open .gift-inside { transform: translateY(-60px); opacity: 1; z-index: 4; }
+
+        /* Overlays */
         .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 9999; padding: 20px; box-sizing: border-box; }
-        .win-box { background: white; color: #333; padding: 25px; border-radius: 20px; border: 5px solid var(--gold); width: 100%; max-width: 350px; position: relative; }
-        input { width: 100%; padding: 12px; margin: 10px 0; border: 2px solid #ddd; border-radius: 10px; text-align: center; font-weight: bold; font-size: 1rem; }
-        button { width: 100%; padding: 12px; background: var(--red); color: white; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; font-size: 1rem; }
-        .btn-like-fb { background: var(--blue); margin-top: 10px; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .win-box { background: white; color: #333; padding: 25px; border-radius: 20px; border: 5px solid var(--gold); width: 100%; max-width: 350px; text-align: center; }
+        input { width: 100%; padding: 12px; margin: 10px 0; border: 2px solid #ddd; border-radius: 10px; text-align: center; font-weight: bold; }
+        button { width: 100%; padding: 12px; background: var(--red); color: white; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; }
+        .btn-notify { background: #28a745; margin-top: 15px; font-size: 0.9rem; padding: 15px 5px; }
 
-        /* Nút gửi thông báo mới */
-        .btn-notify { background: #28a745; margin-top: 10px; font-size: 0.9rem; line-height: 1.2; padding: 15px 5px; }
-
-        /* Custom Alert đẹp */
         #customAlert { display: none; z-index: 10000; }
-        .alert-content { background: #fff; padding: 20px; border-radius: 20px; text-align: center; border-top: 10px solid var(--gold); }
-        .alert-icon { font-size: 40px; margin-bottom: 10px; }
-        .alert-msg { font-weight: bold; color: #333; margin-bottom: 20px; line-height: 1.5; }
+        .alert-content { background: #fff; border-top: 10px solid var(--gold); padding: 20px; border-radius: 20px; }
     </style>
 </head>
 <body>
@@ -71,8 +70,8 @@
 
     <div class="overlay" id="customAlert">
         <div class="win-box alert-content">
-            <div class="alert-icon" id="alertIcon">⚠️</div>
-            <div class="alert-msg" id="alertMsg">Thông báo</div>
+            <div style="font-size:40px">⚠️</div>
+            <div id="alertMsg" style="font-weight:bold; margin:15px 0; color:#333"></div>
             <button onclick="closeAlert()" style="background:#333">ĐÃ HIỂU</button>
         </div>
     </div>
@@ -80,7 +79,7 @@
     <div class="overlay" id="loginForm">
         <div class="win-box">
             <h2 style="margin-top:0">🧧 NHẬP ID INSTAGRAM</h2>
-            <input type="text" id="igID" placeholder="@user.dth (Phải có dấu @)">
+            <input type="text" id="igID" placeholder="@user.dth (Có dấu @)">
             <button onclick="checkIG()">TIẾP TỤC</button>
         </div>
     </div>
@@ -88,19 +87,16 @@
     <div class="overlay" id="likeForm" style="display: none;">
         <div class="win-box">
             <h2 style="color: var(--blue); margin-top:0">👍 LIKE BÀI VIẾT</h2>
-            <p style="font-size: 0.9rem; color: #333;">Bạn vui lòng <b>Like</b> bài viết để nhận lượt bốc!</p>
-            <button class="btn-like-fb" onclick="handleLike()">👍 BẤM ĐỂ LIKE BÀI VIẾT</button>
-            <div id="waitMsg" style="margin-top: 15px; font-size: 0.85rem; display: none; color: #ce1f1f; font-weight: bold;">
-                Đang xác thực... <span id="timer">8</span>s
-            </div>
+            <p>Vui lòng <b>Like</b> bài viết để nhận lộc!</p>
+            <button onclick="handleLike()" style="background:var(--blue)">👍 BẤM ĐỂ LIKE</button>
+            <div id="waitMsg" style="display:none; margin-top:10px; color:red; font-weight:bold;">Xác thực sau... <span id="timer">8</span>s</div>
         </div>
     </div>
 
     <div class="overlay" id="resultForm" style="display: none;">
         <div class="win-box">
             <h2 style="color: var(--red); margin-top:0">CHÚC MỪNG 🎉</h2>
-            <div id="giftText" style="font-size: 1.2rem; font-weight: bold; margin: 10px 0;"></div>
-            <p style="font-size: 0.8rem; color: #666; margin-bottom: 15px;">Vui lòng báo cho Hùng để nhận quà sớm nhất!</p>
+            <div id="giftText" style="font-size: 1.3rem; font-weight: bold; margin: 20px 0; color:#000"></div>
             <button class="btn-notify" onclick="notifyHung()">NHẤP VÀO ĐÂY ĐỂ GỬI THÔNG BÁO TỚI HÙNG</button>
         </div>
     </div>
@@ -124,39 +120,15 @@
         let userIG = "";
         const fbPostURL = "https://www.facebook.com/share/p/1C39v7TrSe/";
 
-        window.showAlert = (msg, icon = '⚠️') => {
-            document.getElementById('alertMsg').innerText = msg;
-            document.getElementById('alertIcon').innerText = icon;
-            document.getElementById('customAlert').style.display = 'flex';
-        };
+        window.showAlert = (msg) => { document.getElementById('alertMsg').innerText = msg; document.getElementById('customAlert').style.display = 'flex'; };
         window.closeAlert = () => document.getElementById('customAlert').style.display = 'none';
-
-        function maskID(id) {
-            let name = id.replace('@', '');
-            if (name.length <= 3) return "@" + name[0] + "***";
-            return "@" + name.substring(0, 2) + "***" + name.substring(name.length - 2);
-        }
-
-        function createFlowers() {
-            const kinds = ['🌸', '🌼'];
-            setInterval(() => {
-                const f = document.createElement('div');
-                f.className = 'flower'; f.innerText = kinds[Math.floor(Math.random() * kinds.length)];
-                f.style.left = Math.random() * 100 + 'vw';
-                f.style.fontSize = (Math.random() * 10 + 15) + 'px';
-                f.style.animationDuration = (Math.random() * 3 + 3) + 's';
-                document.body.appendChild(f);
-                setTimeout(() => f.remove(), 6000);
-            }, 300);
-        }
-        createFlowers();
 
         window.checkIG = async () => {
             const raw = document.getElementById('igID').value.trim().toLowerCase();
-            if (!raw.startsWith('@')) return showAlert("ID phải bắt đầu bằng dấu @");
+            if (!raw.startsWith('@')) return showAlert("ID phải có dấu @!");
             const safeIG = raw.replace(/[@.]/g, "_");
             const snap = await get(ref(db, 'used_ig/' + safeIG));
-            if (snap.exists()) return showAlert("Bạn đã bốc lì xì hôm nay rồi!", "❌");
+            if (snap.exists()) return showAlert("Bạn đã bốc rồi!");
             userIG = raw;
             document.getElementById('loginForm').style.display = 'none';
             document.getElementById('likeForm').style.display = 'flex';
@@ -165,15 +137,10 @@
         window.handleLike = () => {
             window.open(fbPostURL, '_blank');
             document.getElementById('waitMsg').style.display = 'block';
-            let timeLeft = 8;
-            const timerEl = document.getElementById('timer');
-            const countdown = setInterval(() => {
-                timeLeft--; timerEl.innerText = timeLeft;
-                if(timeLeft <= 0) {
-                    clearInterval(countdown);
-                    document.getElementById('likeForm').style.display = 'none';
-                    showAlert("Xác thực thành công! Hãy chọn lộc của bạn.", "✅");
-                }
+            let t = 8;
+            const iv = setInterval(() => {
+                t--; document.getElementById('timer').innerText = t;
+                if(t<=0) { clearInterval(iv); document.getElementById('likeForm').style.display = 'none'; }
             }, 1000);
         };
 
@@ -185,69 +152,75 @@
             if(data) {
                 data.forEach((item, index) => {
                     if(item.status === 'available') {
-                        let platform = item.platform === 'Spotify' ? 'CapCut' : item.platform;
-                        counts[platform] = (counts[platform] || 0) + 1;
-                        
-                        let giftName = item.category === 'ACC' ? `ACC ${platform}` : `${item.amount} ${item.service}`;
-                        
-                        const container = document.createElement('div');
-                        container.className = 'lixi-container';
-                        container.id = `lixi-${index}`;
-                        container.innerHTML = `
-                            <div class="lixi-face lixi-front">🧧</div>
-                            <div class="lixi-face lixi-back">LỘC ĐÃ BỐC:<span>${giftName}</span></div>
+                        let plat = item.platform === 'Spotify' ? 'CapCut' : item.platform;
+                        counts[plat] = (counts[plat] || 0) + 1;
+                        let gift = item.category === 'ACC' ? `ACC ${plat}` : `${item.amount} ${item.service}`;
+
+                        const box = document.createElement('div');
+                        box.className = 'lixi-box';
+                        box.id = `box-${index}`;
+                        box.innerHTML = `
+                            <div class="lixi-cap"></div>
+                            <div class="gift-inside">${gift}</div>
+                            <div class="lixi-body">🧧</div>
                         `;
-                        container.onclick = () => pick(index, item, giftName);
-                        grid.appendChild(container);
+                        box.onclick = () => pick(index, item, gift);
+                        grid.appendChild(box);
                     }
                 });
             }
-            let html = '';
-            for (let p in counts) html += `<div class="stock-item">${p}: ${counts[p]}</div>`;
-            detailBox.innerHTML = html || "KHO TRỐNG";
+            let h = ''; for (let p in counts) h += `<div class="stock-item">${p}: ${counts[p]}</div>`;
+            detailBox.innerHTML = h || "HẾT LỘC";
         });
 
+        // BXH
         onValue(query(ref(db, 'used_ig'), limitToLast(5)), (snap) => {
             const data = snap.val();
             const list = document.getElementById('winner-list');
             if(!data) return;
             let html = '';
-            let items = Object.values(data).reverse();
-            items.forEach((win, index) => {
-                let gift = win.gift.replace('Spotify', 'CapCut');
-                html += `<div class="leader-item"><div class="rank">#${index+1}</div><div class="user-info">${maskID(win.ig)}</div><div class="gift-info">${gift}</div></div>`;
+            Object.values(data).reverse().forEach((win, i) => {
+                let name = win.ig.replace('@', '');
+                let masked = "@" + name[0] + "***" + name.slice(-1);
+                html += `<div class="leader-item"><div class="rank">#${i+1}</div><div class="user-info">${masked}</div><div class="gift-info">${win.gift}</div></div>`;
             });
             list.innerHTML = html;
         });
 
         async function pick(index, item, giftName) {
-            if(!userIG || document.getElementById(`lixi-${index}`).classList.contains('flipped')) return;
+            if(!userIG) return;
+            const box = document.getElementById(`box-${index}`);
+            if(box.classList.contains('open')) return;
 
-            // Hiệu ứng lật
-            document.getElementById(`lixi-${index}`).classList.add('flipped');
+            // HIỆU ỨNG TỪ TỪ MỞ
+            box.classList.add('open');
 
             const safeIG = userIG.replace(/[@.]/g, "_");
-            const up = {};
-            up[`lixi_services/${index}/status`] = 'opened';
-            up[`used_ig/${safeIG}`] = { ig: userIG, gift: giftName };
-            await update(ref(db), up);
+            await update(ref(db), {
+                [`lixi_services/${index}/status`]: 'opened',
+                [`used_ig/${safeIG}`]: { ig: userIG, gift: giftName }
+            });
 
-            // Đợi lật xong hiện thông báo
             setTimeout(() => {
+                confetti({ particleCount: 150, spread: 70 });
                 document.getElementById('giftText').innerText = giftName;
                 document.getElementById('resultForm').style.display = 'flex';
-                confetti({ particleCount: 150, spread: 70 });
-
-                const timeNow = new Date().toLocaleString('vi-VN');
-                const teleMsg = `🧧 <b>LÌ XÌ MỚI</b> 🧧\n👤 <b>Khách:</b> <code>${userIG}</code>\n🎁 <b>Quà:</b> <code>${giftName}</code>\n⏰ <b>Lúc:</b> <code>${timeNow}</code>`;
+                
+                const teleMsg = `🧧 <b>LÌ XÌ MỚI</b>\n👤 <b>ID:</b> ${userIG}\n🎁 <b>Quà:</b> ${giftName}`;
                 fetch(`https://api.telegram.org/bot8506964729:AAFOdrKaq5TUMiqI7OWfHKpNrwY4qZoynVo/sendMessage?chat_id=7114174347&parse_mode=html&text=${encodeURIComponent(teleMsg)}`);
-            }, 600);
+            }, 1200); // Đợi quà trồi lên xong mới hiện bảng
         }
 
-        window.notifyHung = () => {
-            alert("Thông báo đã được gửi đi! Hùng sẽ kiểm tra ngay.");
-            location.reload();
-        };
+        window.notifyHung = () => { alert("Đã gửi thông báo tới Hùng!"); location.reload(); };
+
+        setInterval(() => {
+            const f = document.createElement('div');
+            f.className = 'flower'; f.innerText = '🌸';
+            f.style.left = Math.random() * 100 + 'vw';
+            f.style.animationDuration = (Math.random() * 3 + 3) + 's';
+            document.body.appendChild(f);
+            setTimeout(() => f.remove(), 5000);
+        }, 400);
     </script>
 </body>
 </html>
