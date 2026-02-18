@@ -2,70 +2,43 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <title>Admin - Quản Lý Kho Lì Xì</title>
+    <title>Quản Lý Lì Xì - Tuấn Hùng</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
-        :root { --red: #d32f2f; --gold: #ffd700; --bg: #1a1a1a; }
-        body { background: #1a1a1a; color: #fff; font-family: sans-serif; text-align: center; padding: 20px; }
-        .admin-box { background: #2c2c2c; padding: 20px; border-radius: 15px; border: 2px solid var(--gold); max-width: 500px; margin: auto; }
-        .group-title { background: var(--red); color: white; padding: 8px; margin-top: 20px; border-radius: 5px; font-weight: bold; font-size: 0.9rem; }
-        select, input, button { width: 100%; padding: 12px; margin: 8px 0; border-radius: 8px; border: none; box-sizing: border-box; font-weight: bold; }
-        button { background: var(--gold); color: #1a1a1a; cursor: pointer; transition: 0.3s; }
-        
-        /* CSS cho phần hiển thị giỏ hàng */
-        .cart-container { margin-top: 20px; text-align: left; background: #000; padding: 15px; border-radius: 10px; border: 1px solid #444; }
-        .cart-title { color: var(--gold); font-weight: bold; border-bottom: 1px solid #333; padding-bottom: 5px; margin-bottom: 10px; display: flex; justify-content: space-between; }
-        .cart-list { max-height: 200px; overflow-y: auto; font-size: 0.85rem; }
-        .cart-item { display: flex; justify-content: space-between; align-items: center; padding: 5px 0; border-bottom: 1px solid #222; }
-        .btn-remove { width: auto; padding: 2px 8px; margin: 0; background: #555; color: #fff; font-size: 0.7rem; }
-        .btn-clear { width: auto; padding: 2px 8px; background: #ce1f1f; color: white; border-radius: 4px; font-size: 0.7rem; }
-        
-        #linkShareBox { display: none; margin-top: 20px; background: #333; padding: 15px; border-radius: 10px; border: 1px dashed var(--gold); }
+        body { font-family: sans-serif; background: #f4f4f4; padding: 20px; text-align: center; }
+        .card { background: white; padding: 20px; border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); max-width: 500px; margin: auto; }
+        select, input, button { width: 100%; padding: 12px; margin: 10px 0; border-radius: 8px; border: 1px solid #ddd; box-sizing: border-box; }
+        button { background: #ce1f1f; color: white; font-weight: bold; border: none; cursor: pointer; transition: 0.3s; }
+        button:hover { background: #a01818; }
+        .status { margin-top: 15px; font-size: 0.9rem; color: #666; }
+        .random-info { font-size: 0.8rem; color: #ce1f1f; font-style: italic; }
     </style>
 </head>
 <body>
-    <h1>⚙️ QUẢN LÝ KHO LÌ XÌ</h1>
-    <div class="admin-box">
+
+    <div class="card">
+        <h2>🧧 CÀI ĐẶT KHO LÌ XÌ</h2>
+        <p class="random-info">* Số lượng sẽ được Random khi gửi kho quà</p>
         
-        <div class="group-title">1. THÊM DỊCH VỤ MXH (RANDOM)</div>
-        <select id="smmPlatform">
+        <select id="platform">
             <option value="TikTok">TikTok</option>
             <option value="Facebook">Facebook</option>
             <option value="Instagram">Instagram</option>
+            <option value="CapCut">CapCut</option>
         </select>
-        <select id="smmService">
-            <option value="Like">Like (Tim)</option>
-            <option value="Follow">Follow</option>
-            <option value="View">View</option>
+
+        <select id="service">
+            <option value="Follow">Follow (Random 100-300)</option>
+            <option value="Like">Like (Random 200-400)</option>
+            <option value="View">View (Random 100-1000)</option>
+            <option value="ACC Premium">Tài khoản Premium (Dành cho CapCut)</option>
         </select>
-        <input type="number" id="smmTotal" placeholder="Số bao muốn tạo">
-        <button onclick="addToPool('SMM')" style="background: #4CAF50; color: white;">+ THÊM VÀO GIỎ</button>
 
-        <div class="group-title">2. THÊM TÀI KHOẢN PREMIUM</div>
-        <select id="accPlatform">
-            <option value="Netflix">Netflix Premium</option>
-            <option value="YouTube">YouTube Premium</option>
-            <option value="Spotify">Spotify Premium</option>
-        </select>
-        <input type="number" id="accTotal" placeholder="Số bao muốn tạo">
-        <button onclick="addToPool('ACC')">+ THÊM VÀO GIỎ</button>
-
-        <div class="cart-container">
-            <div class="cart-title">
-                🛒 GIỎ HÀNG CHỜ 
-                <button class="btn-clear" onclick="clearCart()">Xóa tất cả</button>
-            </div>
-            <div class="cart-list" id="cartItems">
-                <p style="color: #666; font-style: italic;">Chưa có món nào...</p>
-            </div>
-        </div>
-
-        <button id="createBtn" style="background: #ce1f1f; color: white; margin-top: 20px; font-size: 1.1rem;">XÁC NHẬN TẠO KHO QUÀ</button>
-
-        <div id="linkShareBox">
-            <p id="userLinkTxt" style="color: var(--gold); font-size: 0.8rem; word-break: break-all;"></p>
-            <button onclick="copyLink()" style="background: #2196F3; color: white;">COPY LINK GỬI KHÁCH</button>
-        </div>
+        <input type="number" id="quantity" placeholder="Số lượng bao lì xì muốn tạo" value="10">
+        
+        <button onclick="generateLixi()">📤 GỬI KHO QUÀ LÊN HỆ THỐNG</button>
+        
+        <div class="status" id="status">Sẵn sàng tạo quà...</div>
     </div>
 
     <script type="module">
@@ -84,80 +57,56 @@
 
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
-        let currentPool = [];
 
-        function getRandomInt(min, max) {
+        // Hàm lấy số ngẫu nhiên trong khoảng
+        function getRandom(min, max) {
             return Math.floor(Math.random() * (max - min + 1)) + min;
         }
 
-        // Cập nhật giao diện giỏ hàng
-        function updateCartUI() {
-            const container = document.getElementById('cartItems');
-            if (currentPool.length === 0) {
-                container.innerHTML = '<p style="color: #666; font-style: italic;">Chưa có món nào...</p>';
-                return;
-            }
+        window.generateLixi = async () => {
+            const platform = document.getElementById('platform').value;
+            const serviceType = document.getElementById('service').value;
+            const qty = parseInt(document.getElementById('quantity').value);
+            const statusDiv = document.getElementById('status');
 
-            let html = '';
-            // Nhóm quà lại để hiển thị cho gọn
-            let summary = {};
-            currentPool.forEach((item, index) => {
-                let label = item.category === 'ACC' ? `Acc ${item.platform}` : `${item.service} ${item.platform}`;
-                if (!summary[label]) summary[label] = 0;
-                summary[label]++;
-            });
+            if (!qty || qty <= 0) return alert("Nhập số lượng bao!");
 
-            for (let label in summary) {
-                html += `
-                    <div class="cart-item">
-                        <span>● ${label}</span>
-                        <span>x${summary[label]} bao</span>
-                    </div>`;
-            }
-            container.innerHTML = html;
-        }
+            statusDiv.innerText = "正在 Gửi dữ liệu...";
+            const lixiList = [];
 
-        window.addToPool = (type) => {
-            if(type === 'SMM') {
-                const p = document.getElementById('smmPlatform').value;
-                const s = document.getElementById('smmService').value;
-                const t = parseInt(document.getElementById('smmTotal').value);
-                if(isNaN(t) || t <= 0) return alert("Nhập số lượng bao!");
+            for (let i = 0; i < qty; i++) {
+                let amount = 0;
+                let finalService = serviceType;
 
-                for(let i=0; i<t; i++) {
-                    let randomQty = (s === 'Like') ? getRandomInt(100, 789) : (s === 'Follow' ? getRandomInt(100, 456) : getRandomInt(10000, 23456));
-                    currentPool.push({ category: 'SMM', platform: p, service: s, amount: randomQty, status: 'available' });
+                // Xử lý Logic Random số lượng
+                if (serviceType === "Follow") {
+                    amount = getRandom(100, 300);
+                } else if (serviceType === "Like") {
+                    amount = getRandom(200, 400);
+                } else if (serviceType === "View") {
+                    amount = getRandom(100, 1000);
+                } else {
+                    amount = "1"; // Cho ACC Premium
                 }
-            } else {
-                const p = document.getElementById('accPlatform').value;
-                const t = parseInt(document.getElementById('accTotal').value);
-                if(isNaN(t) || t <= 0) return alert("Nhập số lượng bao!");
-                for(let i=0; i<t; i++) currentPool.push({ category: 'ACC', platform: p, status: 'available' });
+
+                lixiList.push({
+                    platform: platform,
+                    service: finalService,
+                    amount: amount,
+                    category: serviceType === "ACC Premium" ? "ACC" : "SERVICE",
+                    status: "available"
+                });
             }
-            updateCartUI();
-        };
 
-        window.clearCart = () => {
-            currentPool = [];
-            updateCartUI();
-        };
-
-        document.getElementById('createBtn').onclick = async () => {
-            if(currentPool.length === 0) return alert("Giỏ hàng trống!");
-            currentPool.sort(() => Math.random() - 0.5);
             try {
-                await set(ref(db, 'lixi_services'), currentPool);
-                await set(ref(db, 'used_ig'), null);
-                alert("Đã tạo kho " + currentPool.length + " bao quà thành công!");
-                document.getElementById('userLinkTxt').innerText = window.location.href.replace('index.html', 'user.html');
-                document.getElementById('linkShareBox').style.display = 'block';
-                clearCart();
-            } catch (e) { alert("Lỗi kết nối!"); }
-        };
-
-        window.copyLink = () => {
-            navigator.clipboard.writeText(document.getElementById('userLinkTxt').innerText);
-            alert("Đã copy link!");
+                // Ghi đè kho quà mới lên Firebase
+                await set(ref(db, 'lixi_services'), lixiList);
+                statusDiv.innerText = `✅ Đã tạo thành công ${qty} bao lì xì ${platform}!`;
+                alert("Đã cập nhật kho quà thành công!");
+            } catch (error) {
+                console.error(error);
+                statusDiv.innerText = "❌ Lỗi khi gửi dữ liệu!";
+            }
         };
     </script>
 </body>
