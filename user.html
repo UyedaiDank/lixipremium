@@ -9,14 +9,16 @@
         :root { --red: #ce1f1f; --gold: #ffd700; --dark: #121212; --blue: #1877F2; }
         body { background: var(--dark); color: #fff; font-family: 'Segoe UI', sans-serif; text-align: center; padding: 20px; margin: 0; overflow-x: hidden; }
         
-        /* Hiệu ứng hoa rơi */
+        /* Hoa mai hoa đào rơi */
         .flower { position: fixed; top: -10%; z-index: 999; user-select: none; pointer-events: none; animation: fall linear infinite; }
         @keyframes fall { to { transform: translateY(110vh) rotate(360deg); } }
 
-        /* Banner kho quà & Bảng xếp hạng */
+        /* Banner kho quà */
         .stock-banner { background: rgba(206, 31, 31, 0.2); border: 2px solid var(--gold); padding: 15px; border-radius: 20px; margin: 15px auto; display: inline-block; max-width: 90%; }
         .stock-list { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; font-size: 0.8rem; }
         .stock-item { background: rgba(255,255,255,0.1); padding: 4px 10px; border-radius: 10px; border: 1px solid var(--gold); }
+
+        /* BXH Top 5 ẩn ID */
         .leaderboard { max-width: 420px; margin: 15px auto; background: rgba(255,255,255,0.05); border-radius: 15px; padding: 15px; border: 1px solid #333; }
         .leader-item { display: flex; align-items: center; padding: 8px; border-bottom: 1px solid #222; font-size: 0.85rem; }
         .rank { width: 35px; font-weight: bold; color: var(--gold); text-align: left; }
@@ -34,19 +36,19 @@
         button { width: 100%; padding: 12px; background: var(--red); color: white; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; font-size: 1rem; }
         .btn-like-fb { background: var(--blue); margin-top: 10px; display: flex; align-items: center; justify-content: center; gap: 8px; }
 
-        /* STYLE CHO BẢNG THÔNG BÁO ĐẸP */
+        /* Custom Alert đẹp */
         #customAlert { display: none; z-index: 10000; }
-        .alert-content { background: #fff; padding: 20px; border-radius: 20px; text-align: center; border-top: 10px solid #ffcc00; }
+        .alert-content { background: #fff; padding: 20px; border-radius: 20px; text-align: center; border-top: 10px solid var(--gold); }
         .alert-icon { font-size: 40px; margin-bottom: 10px; }
         .alert-msg { font-weight: bold; color: #333; margin-bottom: 20px; line-height: 1.5; }
-        .btn-ok { background: #333; color: #fff; padding: 10px 30px; border-radius: 50px; }
+        .btn-ok { background: #333; color: #fff; padding: 10px 30px; border-radius: 50px; border: none; font-weight: bold; cursor: pointer; }
     </style>
 </head>
 <body>
 
     <h1>🧧 HÁI LỘC ĐẦU XUÂN 🧧</h1>
 
-    <div class="stock-banner" id="banner-count">
+    <div class="stock-banner">
         <div style="margin-bottom:8px; font-weight:bold; color:var(--gold)">KHO LỘC CÒN LẠI</div>
         <div class="stock-list" id="detail-count">...</div>
     </div>
@@ -69,7 +71,7 @@
     <div class="overlay" id="loginForm">
         <div class="win-box">
             <h2 style="margin-top:0">🧧 NHẬP ID INSTAGRAM</h2>
-            <input type="text" id="igID" placeholder="@user.dth (Cần dấu @)">
+            <input type="text" id="igID" placeholder="@user.dth (Phải có dấu @)">
             <button onclick="checkIG()">TIẾP TỤC</button>
         </div>
     </div>
@@ -112,7 +114,6 @@
         let userIG = "";
         const fbPostURL = "https://www.facebook.com/share/p/1C39v7TrSe/";
 
-        // HÀM HIỂN THỊ THÔNG BÁO ĐẸP
         window.showAlert = (msg, icon = '⚠️') => {
             document.getElementById('alertMsg').innerText = msg;
             document.getElementById('alertIcon').innerText = icon;
@@ -122,25 +123,22 @@
             document.getElementById('customAlert').style.display = 'none';
         };
 
-        // Hàm ẩn ID cho BXH
         function maskID(id) {
             let name = id.replace('@', '');
             if (name.length <= 3) return "@" + name[0] + "***";
             return "@" + name.substring(0, 2) + "***" + name.substring(name.length - 2);
         }
 
-        // Hiệu ứng hoa rơi
         function createFlowers() {
             const kinds = ['🌸', '🌼'];
             setInterval(() => {
                 const f = document.createElement('div');
-                f.className = 'flower';
-                f.innerText = kinds[Math.floor(Math.random() * kinds.length)];
+                f.className = 'flower'; f.innerText = kinds[Math.floor(Math.random() * kinds.length)];
                 f.style.left = Math.random() * 100 + 'vw';
                 f.style.fontSize = (Math.random() * 10 + 15) + 'px';
                 f.style.animationDuration = (Math.random() * 3 + 3) + 's';
                 document.body.appendChild(f);
-                setTimeout(() => f.remove(), 5000);
+                setTimeout(() => f.remove(), 6000);
             }, 300);
         }
         createFlowers();
@@ -185,7 +183,8 @@
             if(data) {
                 data.forEach((item, index) => {
                     if(item.status === 'available') {
-                        counts[item.platform] = (counts[item.platform] || 0) + 1;
+                        let platform = item.platform === 'Spotify' ? 'CapCut' : item.platform;
+                        counts[platform] = (counts[platform] || 0) + 1;
                         const el = document.createElement('div');
                         el.className = 'lixi'; el.innerHTML = '🧧';
                         el.onclick = () => pick(index, item);
@@ -205,14 +204,16 @@
             let html = '';
             let items = Object.values(data).reverse();
             items.forEach((win, index) => {
-                html += `<div class="leader-item"><div class="rank">#${index+1}</div><div class="user-info">${maskID(win.ig)}</div><div class="gift-info">${win.gift}</div></div>`;
+                let gift = win.gift.replace('Spotify', 'CapCut');
+                html += `<div class="leader-item"><div class="rank">#${index+1}</div><div class="user-info">${maskID(win.ig)}</div><div class="gift-info">${gift}</div></div>`;
             });
             list.innerHTML = html;
         });
 
         async function pick(index, item) {
             if(!userIG) return;
-            const giftName = item.category === 'ACC' ? `Tài khoản ${item.platform}` : `${item.amount} ${item.service} ${item.platform}`;
+            let platform = item.platform === 'Spotify' ? 'CapCut' : item.platform;
+            const giftName = item.category === 'ACC' ? `Tài khoản ${platform}` : `${item.amount} ${item.service} ${platform}`;
             const safeIG = userIG.replace(/[@.]/g, "_");
             
             const up = {};
